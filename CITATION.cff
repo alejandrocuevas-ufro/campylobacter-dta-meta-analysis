@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: >-
+  Stool antigen immunoassays for Campylobacter: diagnostic test accuracy
+  meta-analysis (code and data)
+message: If you use this code or data, please cite it as below.
+type: software
+authors:
+  - family-names: Cuevas-Villegas
+    given-names: ""
+    affiliation: Universidad de La Frontera
+  - family-names: Briones-Gómez
+    given-names: ""
+    affiliation: Universidad de La Frontera
+  - family-names: Díaz-Arcos
+    given-names: ""
+    affiliation: Universidad de La Frontera
+  - family-names: Zuñiga-Garrido
+    given-names: ""
+    affiliation: Universidad de La Frontera
+license: MIT
+repository-code: "https://github.com/<usuario>/campylobacter-dta-meta-analysis"
+keywords:
+  - Campylobacter
+  - diagnostic test accuracy
+  - meta-analysis
+  - immunoassay
+  - bivariate model
