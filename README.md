@@ -5,7 +5,7 @@ diagnostic accuracy of stool antigen immunoassays for *Campylobacter* spp., stra
 (lateral flow immunoassay vs microplate enzyme immunoassay) and by reference standard (culture vs
 PCR).
 
-22 studies, 66 test × reference 2×2 estimates, 13 173 stool specimens.
+24 studies, 68 test × reference 2×2 estimates, 13 677 stool specimens.
 
 This repository holds what is needed to **reproduce the calculations**. The figures, the summary
 tables and their interpretation are published with the article and are not duplicated here.
@@ -51,22 +51,40 @@ and tables as published are in English.
 
 ## Analysis decisions worth knowing before you read the code
 
+**Search and its update.** The protocol search (PROSPERO CRD420251160098) closed in December 2025.
+Because manuscript preparation ran long, the search was updated in **PubMed only** to October 2026;
+the two eligible reports it identified are included and the update is shown as a separate branch of
+the PRISMA flow diagram. The update was not replicated in the other four databases, which is a
+limitation of the search process.
+
 **Deduplication.** A study that evaluated several brands on the same platform against the same
 reference standard contributes one entry to each pooled comparison, chosen by a fixed market-share
 ranking declared in `01_prep_datos.R` — not by its results. The full non-deduplicated set is kept
 and used for the brand-level analysis and as a sensitivity scenario.
 
 **Four pooled comparisons.** Platform × reference standard: LFA vs culture (k = 11), microplate EIA
-vs culture (k = 10), LFA vs PCR (k = 5), microplate EIA vs PCR (k = 4). Composite reference
-standards, filtration/enrichment culture, rapid membrane EIA and chemiluminescent assays are
-described narratively and never pooled.
+vs culture (k = 11), LFA vs PCR (k = 6), microplate EIA vs PCR (k = 4) — 32 estimates from 17
+studies. Composite reference standards, filtration/enrichment culture, rapid membrane EIA and
+chemiluminescent assays are described narratively and never pooled.
 
 **Correction layer.** `patch_datos.csv` carries corrections and additions applied on top of the
 extraction workbook, each with its reason in the `notes` field, rather than editing the workbook in
 place. It covers a recalculated 2×2 table for one study whose original extraction did not match its
-declared reference standard, two entries added from the same study, and one study reconstructed
-from its abstract that is flagged `solo_sensibilidad = 1` and therefore enters only the sensitivity
-analysis.
+declared reference standard, two entries added from the same study, the two reports added by the
+search update, and one study reconstructed from its abstract that is flagged
+`solo_sensibilidad = 1` and therefore enters only the sensitivity analysis. One of the added
+reports publishes a single 2×2 table for two kits of the same platform evaluated on the same
+specimens; it is entered once, as a combined entry, not as two brands.
+
+**QUADAS-2 harmonisation.** The extraction workbook rated the same sampling design inconsistently
+across studies. `01_prep_datos.R` applies a single rule: non-consecutive, non-random sampling
+(`preselected = 1`) is rated **high risk** in the patient-selection domain, which QUADAS-2 is
+explicit about. The rule and the entries it affects are documented in the script.
+
+**Continuity correction.** `reitsma()` is used with its default `correction = 0.5` and
+`correction.control = "all"`: when any cell of any study in a comparison is zero, 0.5 is added to
+all four cells of **every** study in that comparison — not only to the zero. This is active in three
+of the four comparisons.
 
 **Heterogeneity.** The `i2` component of `summary.reitsma()` in mada 0.5.12 computes the
 between-study term from the fixed-effect standard errors rather than from the between-study
@@ -75,8 +93,9 @@ recomputes the Zhou & Dendukuri statistic from `Psi` and the diseased / non-dise
 both versions are reported side by side.
 
 **Multiplicity.** Meta-regression is univariable, one moderator per model, with Benjamini-Hochberg
-control. Moderators that induce the same partition of studies within a comparison are grouped and a
-single representative is reported; the grouping is in the `grupo_colineal` column.
+control applied within each comparison. Moderators that induce the same partition of studies are
+grouped and a single representative is reported; the grouping is in the `grupo_colineal` column and
+the size of each correction family in `n_familia_BH`.
 
 ## Citation
 

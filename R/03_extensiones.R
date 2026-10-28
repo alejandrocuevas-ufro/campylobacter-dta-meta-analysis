@@ -35,7 +35,12 @@ i2_tab <- bind_rows(lapply(comparaciones, function(cmp) {
   data.frame(Comparacion = cmp, Etiqueta = etiquetas[[cmp]], k = nrow(d),
              tau2_logitSe = f$Psi[1,1], tau2_logitFPR = f$Psi[2,2],
              cor_aleatoria = s$corRandom[1,2],
-             I2_Zhou = s$i2$Zhou,
+             # Valor tal como lo devuelve mada 0.5.12. NO es el I2 de Zhou-Dendukuri
+             # que se informa en el manuscrito: mada calcula el componente entre
+             # estudios con los errores estándar de los efectos fijos y usa TP+FP /
+             # TN+FN como tamaños de grupo. El recalculado está en 03b_i2_zhou.R
+             # (columna I2_Zhou_recalc_bivariado de i2_bivariado_completo.csv).
+             I2_Zhou_mada_0_5_12 = s$i2$Zhou,
              I2_Holling_noAjust_1 = s$i2$HollingUnadjusted1,
              I2_Holling_noAjust_2 = s$i2$HollingUnadjusted2,
              I2_Holling_noAjust_3 = s$i2$HollingUnadjusted3,
@@ -155,14 +160,19 @@ metareg_tab <- bind_rows(lapply(comparaciones, function(cmp) {
 
 # Grupos de moderadores colineales: dentro de una comparación, dos moderadores
 # que inducen la misma partición de estudios producen exactamente el mismo modelo.
+# La firma incluye el TIPO de modelo además de la partición: un moderador continuo
+# y su versión categorizada inducen la misma partición cuando todos los valores son
+# distintos, pero no son el mismo modelo (1 gl frente a k-1 gl), de modo que no deben
+# agruparse como colineales.
 firma_particion <- function(d, m) {
   if (!m %in% names(d)) return(NA_character_)
   x <- d[[m]]
   if (all(is.na(x))) return(NA_character_)
+  tipo <- if (m %in% continuas && is.numeric(x) && length(unique(na.omit(x))) > 3) "C" else "F"
   g <- as.integer(factor(as.character(x)))
   g[is.na(x)] <- NA_integer_
   # canonizar: reetiquetar por orden de aparición para que 1/2 y 2/1 coincidan
-  lv <- unique(na.omit(g)); paste(match(g, lv), collapse = "-")
+  lv <- unique(na.omit(g)); paste0(tipo, ":", paste(match(g, lv), collapse = "-"))
 }
 metareg_tab$grupo_colineal <- NA_character_
 for (cmp in comparaciones) {
@@ -174,12 +184,36 @@ for (cmp in comparaciones) {
   metareg_tab$grupo_colineal[idx] <- ifelse(is.na(fir), NA_character_,
                                             paste0(cmp, "_g", match(fir, unique(fir))))
 }
+# Representante del grupo: se prefiere un modelo estimable; si hay varios, el primero
+# por orden alfabético. Antes se tomaba el primero sin más, de modo que un moderador
+# no estimable podía desplazar al modelo estimado de su propio grupo.
 metareg_tab <- metareg_tab %>%
   group_by(grupo_colineal) %>%
   mutate(moderadores_equivalentes = if (all(is.na(grupo_colineal))) NA_character_
          else paste(Moderador, collapse = ", "),
-         representante = Moderador == first(Moderador)) %>%
+         representante = Moderador == Moderador[order(estado != "estimado", Moderador)][1]) %>%
   ungroup()
+
+# Control de falsos descubrimientos (Benjamini-Hochberg). Familia: los moderadores
+# estimados y representantes de su grupo DENTRO de cada comparación; el número de
+# pruebas de la familia se informa en n_familia_BH porque difiere entre comparaciones.
+metareg_tab$biv_q_BH <- NA_real_
+metareg_tab$dor_q_BH <- NA_real_
+metareg_tab$n_familia_BH <- NA_integer_
+for (cmp in comparaciones) {
+  sel <- which(metareg_tab$Comparacion == cmp & metareg_tab$estado == "estimado" &
+               metareg_tab$representante)
+  metareg_tab$n_familia_BH[sel] <- length(sel)
+  for (par in c("biv", "dor")) {
+    p <- metareg_tab[[paste0(par, "_p")]][sel]
+    metareg_tab[[paste0(par, "_q_BH")]][sel] <- p.adjust(p, method = "BH")
+  }
+}
+metarreg_representantes <- metareg_tab %>%
+  filter(representante) %>%
+  arrange(Comparacion, biv_q_BH, biv_p)
+write.csv(metarreg_representantes, file.path(OUT, "metarregresion_representantes.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
 
 # Subgrupos: Se/Sp por nivel de los moderadores estimados
 subgrupos_tab <- bind_rows(lapply(comparaciones, function(cmp) {

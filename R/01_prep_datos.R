@@ -133,6 +133,39 @@ if (file.exists(PATCH_FILE)) {
   datos_raw$solo_sensibilidad <- 0
 }
 
+# ------------------------------------------------------------------
+# Reglas de armonización acordadas con el equipo revisor (octubre 2026)
+#
+# (1) Muestras preseleccionadas -> riesgo de sesgo ALTO en selección de
+#     pacientes. La planilla original calificaba de forma desigual el mismo
+#     diseño: Granato 2010, Platts-Mills 2014 y Tolcin 2000 como incierto, y
+#     Franco 2021, Kawatsu 2008 y Schnee 2018 como bajo, pese a que en todos
+#     ellos el muestreo fue selectivo (preselected = 1, sampling_type = 2).
+#     QUADAS-2 califica como riesgo alto el muestreo que no es consecutivo ni
+#     aleatorio, de modo que se unifica el criterio para todas las entradas.
+#     Afecta también a Lin 2026, que llega así desde patch_datos.csv.
+#
+# (2) Campo country: recoge en algunos registros el país del autor de
+#     correspondencia y no el del estudio, y mezcla etiquetas en español y en
+#     inglés. Se normaliza a inglés y se corrige Platts-Mills 2014, cuyas
+#     muestras proceden de Tanzania, Bangladés y Perú.
+# ------------------------------------------------------------------
+pres <- !is.na(datos_raw$preselected) & datos_raw$preselected == 1
+datos_raw$rob_PS[pres] <- 2
+message("preselected -> rob_PS = alto: ", sum(pres), " entradas")
+
+norm_pais <- function(x) {
+  x <- as.character(x)
+  x[grepl("^Alemania", x)]  <- "Germany"
+  x[grepl("^Espa",     x)]  <- "Spain"
+  x[grepl("^Finlandia", x)] <- "Finland"
+  x[grepl("^Jap",      x)]  <- "Japan"
+  x[grepl("^Turqu|^Turkey", x)] <- "Türkiye"
+  x
+}
+datos_raw$country <- norm_pais(datos_raw$country)
+datos_raw$country[grepl("Platts", datos_raw$author)] <- "Tanzania/Bangladesh/Peru"
+
 datos_raw <- standardise_schema(datos_raw)
 
 datos_campy <- datos_raw %>%

@@ -134,6 +134,29 @@ write_xlsx(list(estudios = tabla_estudios, resumen_bivariado = resumen,
                 coef_metarregresion = coef_comparacion, deeks = tabla_deeks),
            file.path(OUT, "resultados_dta_campylobacter.xlsx"))
 write.csv(resumen, file.path(OUT, "resumen_bivariado.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+
+# Parámetros del modelo en escala logit, para reconstruir las regiones de
+# confianza y de predicción de la figura SROC sin volver a ajustar: medias
+# (mu), su matriz de covarianza (v) y la covarianza entre estudios (psi).
+parametros <- do.call(rbind, lapply(names(fits), function(cmp) {
+  f <- fits[[cmp]]; mu <- as.numeric(coef(f)); V <- vcov(f); P <- f$Psi
+  data.frame(Comparacion = cmp, mu_tsens = mu[1], mu_tfpr = mu[2],
+             v11 = V[1,1], v12 = V[1,2], v22 = V[2,2],
+             psi11 = P[1,1], psi12 = P[1,2], psi22 = P[2,2], row.names = NULL)
+}))
+write.csv(parametros, file.path(OUT, "parametros_bivariados.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+# Tabla por entrada con las covariables que usan las figuras para codificar el
+# rigor del estudio (riesgo de sesgo del estándar de referencia y diseño).
+estudios_rigor <- do.call(rbind, lapply(comparaciones, function(cmp) {
+  d <- DAT$global[[cmp]]
+  data.frame(Comparacion = cmp, Study_ID = d$Study_ID, Index_1 = d$Index_1,
+             n = d$TP + d$FN + d$FP + d$TN, sens = d$sensitivity, spec = d$specificity,
+             rob_RS = d$rob_RS, rob_PS = d$rob_PS, prospective = d$prospective,
+             preselected = d$preselected, row.names = NULL)
+}))
+write.csv(estudios_rigor, file.path(OUT, "estudios_rigor.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
 write.csv(heterog, file.path(OUT, "heterogeneidad.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 write.csv(tabla_estudios, file.path(OUT, "estudios_incluidos.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 saveRDS(list(fits = fits, cmp_culture = cmp_culture, cmp_pcr = cmp_pcr,
