@@ -28,6 +28,7 @@ authors:
     affiliation: >-
       Universidad de La Frontera, Facultad de Medicina, Carrera de Tecnología
       Médica
+doi: 10.5281/zenodo.23921980
 license: MIT
 repository-code: >-
   https://github.com/alejandrocuevas-ufro/campylobacter-dta-meta-analysis
@@ -45,3 +46,10 @@ keywords:
   - bivariate model
   - QUADAS-2
 version: 1.0.0
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23921980
+    description: Concept DOI, always resolves to the latest archived version
+  - type: doi
+    value: 10.5281/zenodo.23921981
+    description: DOI of version 1.0.0

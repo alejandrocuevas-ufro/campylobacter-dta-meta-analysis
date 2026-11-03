@@ -7,6 +7,11 @@ PCR).
 
 24 studies, 68 test × reference 2×2 estimates, 13 677 stool specimens.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23921980.svg)](https://doi.org/10.5281/zenodo.23921980)
+
+Archived on Zenodo: **https://doi.org/10.5281/zenodo.23921980** (concept DOI — always resolves
+to the latest version).
+
 This repository holds what is needed to **reproduce the calculations**. The figures, the summary
 tables and their interpretation are published with the article and are not duplicated here.
 
@@ -99,7 +104,8 @@ the size of each correction family in `n_familia_BH`.
 
 ## Citation
 
-See `CITATION.cff`. Until the article is published, cite this repository by its commit hash.
+See `CITATION.cff`. Cite the concept DOI 10.5281/zenodo.23921980, which resolves to the latest
+archived version; use 10.5281/zenodo.23921981 to cite release v1.0.0 specifically.
 
 ## License
 
