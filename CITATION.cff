@@ -6,22 +6,42 @@ message: If you use this code or data, please cite it as below.
 type: software
 authors:
   - family-names: Cuevas-Villegas
-    given-names: ""
-    affiliation: Universidad de La Frontera
+    given-names: Alejandro Esteban
+    affiliation: >-
+      Universidad de La Frontera, Facultad de Medicina, Departamento de
+      Ciencias Preclínicas
+  - family-names: Levicán-Asenjo
+    given-names: Arturo
+    affiliation: Universidad de La Frontera, Facultad de Medicina
   - family-names: Briones-Gómez
-    given-names: ""
-    affiliation: Universidad de La Frontera
+    given-names: Javiera
+    affiliation: >-
+      Universidad de La Frontera, Facultad de Medicina, Carrera de Tecnología
+      Médica
   - family-names: Díaz-Arcos
-    given-names: ""
-    affiliation: Universidad de La Frontera
+    given-names: Nicole
+    affiliation: >-
+      Universidad de La Frontera, Facultad de Medicina, Carrera de Tecnología
+      Médica
   - family-names: Zuñiga-Garrido
-    given-names: ""
-    affiliation: Universidad de La Frontera
+    given-names: Marión
+    affiliation: >-
+      Universidad de La Frontera, Facultad de Medicina, Carrera de Tecnología
+      Médica
 license: MIT
-repository-code: "https://github.com/<usuario>/campylobacter-dta-meta-analysis"
+repository-code: >-
+  https://github.com/alejandrocuevas-ufro/campylobacter-dta-meta-analysis
+abstract: >-
+  Analysis code and extracted data for a systematic review and bivariate
+  meta-analysis of the diagnostic accuracy of stool antigen immunoassays for
+  Campylobacter spp., stratified by platform (lateral flow immunoassay vs
+  microplate enzyme immunoassay) and by reference standard (culture vs PCR).
+  24 studies, 68 test x reference 2x2 estimates, 13 677 stool specimens.
 keywords:
   - Campylobacter
   - diagnostic test accuracy
   - meta-analysis
   - immunoassay
   - bivariate model
+  - QUADAS-2
+version: 1.0.0

@@ -1,0 +1,46 @@
+{
+  "title": "Stool antigen immunoassays for Campylobacter: diagnostic test accuracy meta-analysis (code and data)",
+  "upload_type": "software",
+  "license": "MIT",
+  "version": "1.0.0",
+  "language": "spa",
+  "creators": [
+    {
+      "name": "Cuevas-Villegas, Alejandro Esteban",
+      "affiliation": "Universidad de La Frontera"
+    },
+    {
+      "name": "Levicán-Asenjo, Arturo",
+      "affiliation": "Universidad de La Frontera"
+    },
+    {
+      "name": "Briones-Gómez, Javiera",
+      "affiliation": "Universidad de La Frontera"
+    },
+    {
+      "name": "Díaz-Arcos, Nicole",
+      "affiliation": "Universidad de La Frontera"
+    },
+    {
+      "name": "Zuñiga-Garrido, Marión",
+      "affiliation": "Universidad de La Frontera"
+    }
+  ],
+  "description": "<p>Analysis code and extracted data for a systematic review and bivariate meta-analysis of the diagnostic accuracy of stool antigen immunoassays for <em>Campylobacter</em> spp., stratified by platform (lateral flow immunoassay vs microplate enzyme immunoassay) and by reference standard (culture vs PCR). 24 studies, 68 test × reference 2×2 estimates, 13 677 stool specimens.</p><p>Protocol registered in PROSPERO (CRD420251160098). Code is MIT licensed; the extracted data are CC BY 4.0.</p>",
+  "keywords": [
+    "Campylobacter",
+    "diagnostic test accuracy",
+    "meta-analysis",
+    "immunoassay",
+    "bivariate model",
+    "QUADAS-2",
+    "systematic review"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://www.crd.york.ac.uk/prospero/display_record.php?RecordID=1160098",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
